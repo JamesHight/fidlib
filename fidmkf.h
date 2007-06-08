@@ -128,6 +128,8 @@
 //	Not A Lawyer".
 //
 
+#ifndef FIDMK_H
+#define FIDMK_H
 
 #ifdef HUGE_VAL
  #define INF HUGE_VAL
@@ -729,7 +731,7 @@ z2fidfilter(double gain, int cbm) {
    ff->len= 0;
    ff= FFNEXT(ff);
    
-   rv= realloc(rv, ((char*)ff)-((char*)rv));
+   rv= (FidFilter*) realloc(rv, ((char*)ff)-((char*)rv));
    if (!rv) error("Out of memory");
    return rv;
 }
@@ -831,3 +833,4 @@ prop_integral(double freq) {
 }
    
 // END //
+#endif
