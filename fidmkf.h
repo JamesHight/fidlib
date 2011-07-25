@@ -131,10 +131,19 @@
 #ifndef FIDMK_H
 #define FIDMK_H
 
-#ifdef HUGE_VAL
+#ifndef T_MSVC
+ #ifdef HUGE_VAL
+  #define INF HUGE_VAL
+ #else
+  #define INF (1.0/0.0)
+ #endif
+#endif
+
+//Hacks for crappy linker error in MSVC... - Albert
+#ifdef T_MSVC
+ #undef HUGE_VAL
+ #define HUGE_VAL 1.797693134862315E+308
  #define INF HUGE_VAL
-#else
- #define INF (1.0/0.0)
 #endif
 
 #define TWOPI (2*M_PI)
@@ -731,7 +740,7 @@ z2fidfilter(double gain, int cbm) {
    ff->len= 0;
    ff= FFNEXT(ff);
    
-   rv= (FidFilter*) realloc(rv, ((char*)ff)-((char*)rv));
+   rv= (FidFilter*)realloc(rv, ((char*)ff)-((char*)rv));
    if (!rv) error("Out of memory");
    return rv;
 }
@@ -834,3 +843,4 @@ prop_integral(double freq) {
    
 // END //
 #endif
+

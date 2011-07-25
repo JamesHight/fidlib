@@ -1115,7 +1115,7 @@ des_lpbl(double rate, double f0, double f1, int order, int n_arg, double *arg) {
    double tot, adj;
    int max= (int)floor(wid);
    int a;
-   FidFilter *ff= (FidFilter*) Alloc(FFCSIZE(1, max*2+1));
+   FidFilter *ff= (FidFilter*)Alloc(FFCSIZE(1, max*2+1));
    ff->typ= 'F';
    ff->cbm= 0;
    ff->len= max*2+1;
@@ -1162,7 +1162,7 @@ des_lphn(double rate, double f0, double f1, int order, int n_arg, double *arg) {
    double tot, adj;
    int max= (int)floor(wid);
    int a;
-   FidFilter *ff= (FidFilter*) Alloc(FFCSIZE(1, max*2+1));
+   FidFilter *ff= (FidFilter*)Alloc(FFCSIZE(1, max*2+1));
    ff->typ= 'F';
    ff->cbm= 0;
    ff->len= max*2+1;
@@ -1185,7 +1185,7 @@ des_lpba(double rate, double f0, double f1, int order, int n_arg, double *arg) {
    double tot, adj;
    int max= (int)floor(wid);
    int a;
-   FidFilter *ff= (FidFilter*)  Alloc(FFCSIZE(1, max*2+1));
+   FidFilter *ff= (FidFilter*)Alloc(FFCSIZE(1, max*2+1));
    ff->typ= 'F';
    ff->cbm= 0;
    ff->len= max*2+1;
@@ -1351,7 +1351,7 @@ struct Spec {
 };
 
 FidFilter *
-fid_design(char *spec, double rate, double freq0, double freq1, int f_adj, char **descp) {
+fid_design(const char *spec, double rate, double freq0, double freq1, int f_adj, char **descp) {
    FidFilter *rv;
    Spec sp;
    double f0, f1;
@@ -1388,7 +1388,7 @@ fid_design(char *spec, double rate, double freq0, double freq1, int f_adj, char 
    if (descp) {
       char *fmt= filter[sp.fi].txt;
       int max= strlen(fmt) + 60 + sp.n_arg * 20;
-      char *desc= (char*) Alloc(max);
+      char *desc= (char*)Alloc(max);
       char *p= desc;
       char ch;
       double *arg= sp.argarr;
@@ -1610,7 +1610,7 @@ expand_spec(char *buf, char *bufend, char *str) {
 //
 
 double 
-fid_design_coef(double *coef, int n_coef, char *spec, double rate, 
+fid_design_coef(double *coef, int n_coef, const char *spec, double rate, 
 		double freq0, double freq1, int adj) {
    FidFilter *filt= fid_design(spec, rate, freq0, freq1, adj, 0);
    FidFilter *ff= filt;
@@ -1937,7 +1937,7 @@ parse_spec(Spec *sp) {
 //
 
 void 
-fid_rewrite_spec(char *spec, double freq0, double freq1, int adj,
+fid_rewrite_spec(const char *spec, double freq0, double freq1, int adj,
 		 char **spec1p, 
 		 char **spec2p, double *freq0p, double *freq1p, int *adjp) {
    Spec sp;
@@ -1959,14 +1959,14 @@ fid_rewrite_spec(char *spec, double freq0, double freq1, int adj,
        default: buf[0]= 0;
       }
       len= strlen(buf);
-      rv= (char*) Alloc(sp.minlen + len + 1);
+      rv= (char*)Alloc(sp.minlen + len + 1);
       memcpy(rv, spec, sp.minlen);
       strcpy(rv+sp.minlen, buf);
       *spec1p= rv;
    }
 
    if (spec2p) {
-      char *rv= (char *)Alloc(sp.minlen + 1);
+      char *rv= (char*)Alloc(sp.minlen + 1);
       memcpy(rv, spec, sp.minlen);
       *spec2p= rv;
       *freq0p= sp.f0;
@@ -2147,7 +2147,7 @@ fid_parse(double rate, char **pp, FidFilter **ffp) {
    char buf[128];
    char *p= *pp, *rew;
 #define INIT_LEN 128
-   char *rv= (char*) Alloc(INIT_LEN);
+   char *rv= (char*)Alloc(INIT_LEN);
    char *rvend= rv + INIT_LEN;
    char *rvp= rv;
    char *tmp;
