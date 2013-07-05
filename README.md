@@ -42,8 +42,10 @@ To build 'firun' (if included executables don't work):
 
 Jim
 
+````
 --
  Jim Peters                  (_)/=\~/_(_)                 jim@uazu.net
                           (_)  /=\  ~/_  (_)
  Uazú                  (_)    /=\    ~/_    (_)                http://
  Brighton, UK       (_) ____ /=\ ____ ~/_ ____ (_)            uazu.net
+ ````
