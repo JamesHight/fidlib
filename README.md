@@ -1,7 +1,7 @@
 Fidlib
 ======
 
-This is an archive copy of Jim Peters fidlib from http://uazu.net/fidlib/
+This is an archive copy of Jim Peters' fidlib from http://uazu.net/fidlib/
 
 
 Fidlib and Firun
