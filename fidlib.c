@@ -1338,7 +1338,7 @@ static FidFilter *auto_adjust_single(Spec *sp, double rate, double f0);
 static FidFilter *auto_adjust_dual(Spec *sp, double rate, double f0, double f1);
 struct Spec {
 #define MAXARG 10
-   char *spec;
+   const char *spec;
    double in_f0, in_f1;
    int in_adj;
    double argarr[MAXARG];
@@ -1826,7 +1826,7 @@ parse_spec(Spec *sp) {
    
    for (a= 0; 1; a++) {
       char *fmt= filter[a].fmt;
-      char *p= sp->spec;
+      const char *p= sp->spec;
       char ch, *q;
 
       if (!fmt) return strdupf("Spec-string \"%s\" matches no known format", sp->spec);
