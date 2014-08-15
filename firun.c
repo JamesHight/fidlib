@@ -55,6 +55,7 @@ NL "  -L         Ignore following arguments, display list of filter types."
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <ctype.h>
 #include <math.h>
 #include <errno.h>
@@ -115,10 +116,10 @@ int n_chan;		// Number of output channels
 int n_filt;		// Number of filters
 FidFilter **filt;	// Loaded filters
 
-uchar *inbuf;		// Input buffer
-uchar *inbufend;	// End of input buffer allocated space, +1
-uchar *inp;		// Input pointer
-uchar *inend;		// End of currently-loaded data, +1
+char *inbuf;		// Input buffer
+char *inbufend;	// End of input buffer allocated space, +1
+char *inp;		// Input pointer
+char *inend;		// End of currently-loaded data, +1
 int ineof;		// Hit EOF?
 
 //
@@ -264,7 +265,7 @@ void
 refill_input() {
    if (!inbuf) {
       int len= 16384;	// 100ms of data at 44100Hz 16-bit stereo
-      inbuf= ALLOC_ARR(len+1, uchar);
+      inbuf= ALLOC_ARR(len+1, char);
       inbufend= inbuf+len;
       *inbufend= 0;   // Trailing NUL so that string-reading functions can never overrun
       inp= inend= inbuf;
@@ -315,8 +316,7 @@ input(char **ipp) {
 	  inp++; continue;
        case 'a':
 	  {
-	     int cnt;
-	     uchar *tmp;
+	     char *tmp;
 
 	     // Skip WS (maybe lots of it)
 	     while (1) {
@@ -329,7 +329,7 @@ input(char **ipp) {
 	     if (inend - inp < 128 && !ineof) refill_input();
 	     if (inp == inend) goto badeof;
 
-	     val= strtod(inp, (char**)&tmp);
+	     val= strtod(inp, &tmp);
 	     if (inp == tmp) 
 		error("Bad floating-point value:\n %.20s", inp);
 	     inp= tmp;
@@ -578,7 +578,6 @@ main(int ac, char **av) {
 	    char *ip= ispec;
 	    char *op= ospec;
 	    int chan= 0;
-	    int ch;
 
 	    if (inend - inp < 128 && !ineof)
 	       refill_input();

@@ -76,9 +76,9 @@ typedef unsigned char uchar;
 static double 
 filter_step(void *fbuf, double iir) {
    double *coef= ((RunBuf*)fbuf)->coef;
-   uchar *cmd= ((RunBuf*)fbuf)->cmd;
+   char *cmd= ((RunBuf*)fbuf)->cmd;
    double *buf= &((RunBuf*)fbuf)->buf[0];
-   uchar ch;
+   char ch;
    double fir= 0;
    double tmp= buf[0];
    int cnt;
