@@ -28,7 +28,7 @@ typedef struct RunBuf {
    double *coef;
    char *cmd;
    int mov_cnt;		// Number of bytes to memmove
-   double buf[0];
+   double *buf;
 } RunBuf;
 
 
