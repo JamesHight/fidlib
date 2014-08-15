@@ -311,7 +311,7 @@ strdupf(char *fmt, ...) {
    int len;
    va_start(ap, fmt);
    len= vsnprintf(buf, sizeof(buf), fmt, ap);
-   if (len < 0 || len >= sizeof(buf)-1) 
+   if (len < 0 || len >= (int)sizeof(buf)-1) 
       error("strdupf exceeded buffer");
    rv= strdup(buf);
    if (!rv) error("Out of memory");

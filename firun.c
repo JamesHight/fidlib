@@ -367,7 +367,7 @@ input(char **ipp) {
 	  val= ((((ch2<<8) + ch1) ^ 32768) - 32768) / 32768.0;
 	  break;
        case 'f':
-	  if (avail < sizeof(float)) goto badeof;
+	  if (avail < (int)sizeof(float)) goto badeof;
 	  memcpy((void*)&fv, inp, sizeof(float));
 	  inp += sizeof(float);
 	  val= fv;
