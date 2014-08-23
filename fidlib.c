@@ -24,9 +24,6 @@
 //	Robert Bristow-Johnson's EQ cookbook formulae:
 //	  http://www.harmony-central.com/Computer/Programming/Audio-EQ-Cookbook.txt
 //	
-
-#define VERSION "0.9.10"
-
 //
 //	Filter specification string
 //	---------------------------
@@ -196,28 +193,6 @@
 //
 
 //
-//	Check that a target macro has been set.  This macro selects
-//	various fixes required on various platforms:
-//
-//	  T_LINUX  Linux, or probably any UNIX-like platform with GCC
-//	  T_MINGW  MinGW -- either building on Win32 or cross-compiling
-//	  T_MSVC   Microsoft Visual C
-//
-//	(On MSVC, add "T_MSVC" to the preprocessor definitions in the
-//	project settings, or add /D "T_MSVC" to the compiler
-//	command-line.)
-//
-
-#ifndef T_LINUX
-#ifndef T_MINGW
-#ifndef T_MSVC
-#error Please define one of the T_* target macros (e.g. -DT_LINUX); see fidlib.c
-#endif
-#endif
-#endif
-
-
-//
 //	Select which method of filter execution is preferred.
 //	RF_CMDLIST is recommended (and is the default).
 //
@@ -226,14 +201,8 @@
 //	  RF_JIT      -- fastest JIT run-time generated code (no longer supported)
 //
 
-#ifndef RF_COMBINED
-#ifndef RF_CMDLIST
-#ifndef RF_JIT
-
+#if !defined(RF_COMBINED) && !defined(RF_CMDLIST) && !defined(RF_JIT)
 #define RF_CMDLIST
-
-#endif
-#endif
 #endif
 
 //
@@ -259,27 +228,16 @@ extern FidFilter *mkfilter(char *, ...);
 //
 
 // Macro for local inline routines that shouldn't be visible externally
+// because Microsoft can't figure out how to support C99.
 // See Mixxx Bug #1179683
-#if defined(T_MINGW) || defined(T_MSVC)
- #define STATIC_INLINE static __inline
-#else
- #define STATIC_INLINE static inline 
+#ifdef _MSC_VER
+#define XINLINE __inline
+#define vsnprintf _vsnprintf
+#ifndef snprintf
+#define snprintf _snprintf
 #endif
-
-// MinGW and MSVC fixes
-#if defined(T_MINGW) || defined(T_MSVC)
- #ifndef vsnprintf
-  #define vsnprintf _vsnprintf
- #endif
- #ifndef snprintf
-  #define snprintf _snprintf
- #endif
-// Not sure if we strictly need this still
- STATIC_INLINE double 
- my_asinh(double val) {
-    return log(val + sqrt(val*val + 1.0));
- }
- #define asinh(xx) my_asinh(xx)
+#else
+#define XINLINE inline 
 #endif
 
 
@@ -333,7 +291,7 @@ Alloc(int size) {
 //      Complex multiply: aa *= bb;
 //
 
-STATIC_INLINE void
+static XINLINE void
 cmul(double *aa, double *bb) {
    double rr= aa[0] * bb[0] - aa[1] * bb[1];
    double ii= aa[0] * bb[1] + aa[1] * bb[0];
@@ -345,7 +303,7 @@ cmul(double *aa, double *bb) {
 //      Complex square: aa *= aa;
 //
 
-STATIC_INLINE void
+static XINLINE void
 csqu(double *aa) {
    double rr= aa[0] * aa[0] - aa[1] * aa[1];
    double ii= 2 * aa[0] * aa[1];
@@ -357,7 +315,7 @@ csqu(double *aa) {
 //      Complex multiply by real: aa *= bb;
 //
 
-STATIC_INLINE void
+static XINLINE void
 cmulr(double *aa, double fact) {
    aa[0] *= fact;
    aa[1] *= fact;
@@ -367,7 +325,7 @@ cmulr(double *aa, double fact) {
 //	Complex conjugate: aa= aa*
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 cconj(double *aa) {
    aa[1]= -aa[1];
 }
@@ -376,7 +334,7 @@ cconj(double *aa) {
 //      Complex divide: aa /= bb;
 //
 
-STATIC_INLINE void
+static XINLINE void
 cdiv(double *aa, double *bb) {
    double rr= aa[0] * bb[0] + aa[1] * bb[1];
    double ii= -aa[0] * bb[1] + aa[1] * bb[0];
@@ -389,7 +347,7 @@ cdiv(double *aa, double *bb) {
 //	Complex reciprocal: aa= 1/aa
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 crecip(double *aa) {
    double fact= 1.0 / (aa[0] * aa[0] + aa[1] * aa[1]);
    aa[0] *= fact;
@@ -400,7 +358,7 @@ crecip(double *aa) {
 //	Complex assign: aa= bb
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 cass(double *aa, double *bb) {
    memcpy(aa, bb, 2*sizeof(double));  // Assigning doubles is really slow
 }
@@ -409,7 +367,7 @@ cass(double *aa, double *bb) {
 //	Complex assign: aa= (rr + ii*j)
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 cassz(double *aa, double rr, double ii) {
    aa[0]= rr;
    aa[1]= ii;
@@ -419,7 +377,7 @@ cassz(double *aa, double rr, double ii) {
 //	Complex add: aa += bb
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 cadd(double *aa, double *bb) {
    aa[0] += bb[0];
    aa[1] += bb[1];
@@ -429,7 +387,7 @@ cadd(double *aa, double *bb) {
 //	Complex add: aa += (rr + ii*j)
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 caddz(double *aa, double rr, double ii) {
    aa[0] += rr;
    aa[1] += ii;
@@ -439,7 +397,7 @@ caddz(double *aa, double rr, double ii) {
 //	Complex subtract: aa -= bb
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 csub(double *aa, double *bb) {
    aa[0] -= bb[0];
    aa[1] -= bb[1];
@@ -449,7 +407,7 @@ csub(double *aa, double *bb) {
 //	Complex subtract: aa -= (rr + ii*j)
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 csubz(double *aa, double rr, double ii) {
    aa[0] -= rr;
    aa[1] -= ii;
@@ -459,7 +417,7 @@ csubz(double *aa, double rr, double ii) {
 //	Complex negate: aa= -aa
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 cneg(double *aa) {
    aa[0]= -aa[0];
    aa[1]= -aa[1];
@@ -471,7 +429,7 @@ cneg(double *aa) {
 //      Coefficients are real values.
 //
 
-STATIC_INLINE void
+static XINLINE void
 evaluate(double *rv, double *coef, int n_coef, double *in) {
    double pz[2];        // Powers of Z
 
@@ -1869,7 +1827,7 @@ fid_list_filters_buf(char *buf, char *bufend) {
 //      Do a convolution of parameters in place
 //
 
-STATIC_INLINE int
+static XINLINE int
 convolve(double *dst, int n_dst, double *src, int n_src) {
    int len= n_dst + n_src - 1;
    int a, b;

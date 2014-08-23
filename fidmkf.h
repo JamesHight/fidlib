@@ -153,13 +153,13 @@
 //	Complex square root: aa= aa^0.5
 //
 
-STATIC_INLINE double
+static XINLINE double
 my_sqrt(double aa) {
    return aa <= 0.0 ? 0.0 : sqrt(aa);
 }
 
 // 'csqrt' clashes with builtin in GCC 4, so call it 'c_sqrt'
-STATIC_INLINE void 
+static XINLINE void 
 c_sqrt(double *aa) {
    double mag= hypot(aa[0], aa[1]);
    double rr= my_sqrt((mag + aa[0]) * 0.5);
@@ -173,7 +173,7 @@ c_sqrt(double *aa) {
 //	Complex imaginary exponent: aa= e^i.theta
 //
 
-STATIC_INLINE void 
+static XINLINE void 
 cexpj(double *aa, double theta) {
    aa[0]= cos(theta);
    aa[1]= sin(theta);
@@ -184,7 +184,7 @@ cexpj(double *aa, double theta) {
 //
 
 // 'cexp' clashes with builtin in GCC 4, so call it 'c_exp'
-STATIC_INLINE void 
+static XINLINE void 
 c_exp(double *aa) {
    double mag= exp(aa[0]);
    aa[0]= mag * cos(aa[1]);
@@ -222,7 +222,7 @@ static char zertyp[MAXPZ];
 //	Pre-warp a frequency
 //
 
-STATIC_INLINE double 
+static XINLINE double 
 prewarp(double val) {
    return tan(val * M_PI) / M_PI;
 }

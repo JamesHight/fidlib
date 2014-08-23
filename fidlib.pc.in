@@ -1,0 +1,10 @@
+prefix=@prefix@
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: fidlib
+Description: fidlib library
+Version: @VERSION@
+Libs: @LIBS@ -L${libdir} -lfidlib
+Cflags: -I${includedir}
+Requires: @REQUIRE@
