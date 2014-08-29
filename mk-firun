@@ -1,7 +1,0 @@
-#!/bin/bash
-
-OPT="-O6 -s"
-[ "$1" = "-d" ] && OPT="-g -Wall -Wextra"
-
-
-gcc -DT_LINUX $OPT fidlib.c firun.c -lm -o firun
